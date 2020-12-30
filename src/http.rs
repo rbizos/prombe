@@ -10,7 +10,7 @@ pub struct HttpTransport {}
 #[async_trait]
 impl Transport for HttpTransport {
     async fn get(&self, uri: &str) -> Result<String> {
-        match get(uri).await?.text().await {
+        match get(uri).await?.error_for_status()?.text().await {
             Ok(text) => Ok(text),
             Err(e) => Err(Box::new(e)),
         }
