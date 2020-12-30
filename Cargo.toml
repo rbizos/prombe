@@ -7,8 +7,10 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-hyper = "0.13"
-hyper-tls = "0.4.3"
 reqwest = { version = "0.10", features = ["json"] }
 tokio = { version = "0.2", features = ["full"] }
 async-trait = "0.1.42"
+prometheus = "0.11.0"
+serde_json = "1"
+lazy_static =  "1.4.0"
+warp = "0.2"

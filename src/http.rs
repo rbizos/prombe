@@ -1,27 +1,18 @@
-use crate::error::CheckError;
 use crate::traits::Transport;
 use crate::utils::Result;
 
 use async_trait::async_trait;
 
-use hyper::Client;
-use hyper_tls::HttpsConnector;
+use reqwest::get;
 
 pub struct HttpTransport {}
 
 #[async_trait]
 impl Transport for HttpTransport {
     async fn get(&self, uri: &str) -> Result<String> {
-        let https = HttpsConnector::new();
-        let client = Client::builder().build::<_, hyper::Body>(https);
-        let resp = client.get(uri.parse()?).await?;
-        if resp.status().is_success() {
-            return Ok(String::from("Hello, world!"));
-        } else {
-            return Err(Box::new(CheckError::new(&String::from(format!(
-                "{}",
-                resp.status()
-            )))));
+        match get(uri).await?.text().await {
+            Ok(text) => Ok(text),
+            Err(e) => Err(Box::new(e)),
         }
     }
 }

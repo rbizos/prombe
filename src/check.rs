@@ -2,6 +2,7 @@ use crate::traits::{Check, Transport};
 use crate::utils::Result;
 
 use async_trait::async_trait;
+use serde_json::Value;
 
 pub struct PrometheusCheck<'a> {
     uri: &'a str,
@@ -26,8 +27,13 @@ impl<'a> PrometheusCheck<'a> {
 #[async_trait]
 impl<'a> Check for PrometheusCheck<'a> {
     async fn update(&mut self) -> Result<()> {
-        self.transport.get(self.uri).await?;
-        println!("{:?}", self.query);
+        let response = self.transport.get(self.uri).await?;
+        let v: Value = serde_json::from_str(&response)?;
+        match v.get("data") {
+            Some(da) => println!("{:?}", da),
+            None => println!("mutmut"),
+        }
+
         return Ok(());
     }
 }
